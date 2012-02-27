@@ -1,0 +1,5 @@
+<level xStartPos="10.0f" yStartPos="1.5f" zStartPos="-10.0f">
+	<monsters>
+		<monster xStartPos="20f" yStartPos="1.5f" zStartPos="-15f" />
+	</monsters>
+</level>
