@@ -8,10 +8,14 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 
 import org.w3c.dom.Element;
-//import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 
+/**
+ * Describes a monster in the game.
+ * @author Philip
+ *
+ */
 public class Monster extends Entity {
 	protected void render() {
 		glPushMatrix();
@@ -63,11 +67,16 @@ public class Monster extends Entity {
 		
 	}
 
-	public static Monster ReadFromXML(Element mNode) {
+	/**
+	 * Reads a monster from an XML element
+	 * @param element Element to read from
+	 * @return Monster
+	 */
+	public static Monster ReadFromXML(Element element) {
 		Monster m = new Monster();
-		m.xStartPos = Float.parseFloat(mNode.getAttribute("xStartPos"));
-		m.yStartPos = Float.parseFloat(mNode.getAttribute("yStartPos"));
-		m.zStartPos = Float.parseFloat(mNode.getAttribute("zStartPos"));
+		m.xStartPos = Float.parseFloat(element.getAttribute("xStartPos"));
+		m.yStartPos = Float.parseFloat(element.getAttribute("yStartPos"));
+		m.zStartPos = Float.parseFloat(element.getAttribute("zStartPos"));
 		return m;
 	}
 

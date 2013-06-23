@@ -22,6 +22,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Describes a game level.
+ * @author Philip
+ *
+ */
 public class Level {
 	//Statics
 	private final static float MOVE_FORWARD_SPEED = 0.25f;
@@ -53,6 +58,11 @@ public class Level {
 	private int MAX_BULLETS;
 	private long bulletTime;
 	
+	/**
+	 * Load a level from a file
+	 * @param filename File name.
+	 * @return Level
+	 */
 	public static Level LoadFromFile(String filename) {
 		if(filename != null) {
 			InputStream is = Level.class.getResourceAsStream(filename);
@@ -70,12 +80,18 @@ public class Level {
 		}
 		return null;
 	}
-	private static Level ReadFromXML(Element gNode) {
+	
+	/**
+	 * Read the level from an XML element.
+	 * @param element Element
+	 * @return Level
+	 */
+	private static Level ReadFromXML(Element element) {
 		Level l = new Level();
-		l.xStartPos = Float.parseFloat(gNode.getAttribute("xStartPos"));
-		l.yStartPos = Float.parseFloat(gNode.getAttribute("yStartPos"));
-		l.zStartPos = Float.parseFloat(gNode.getAttribute("zStartPos"));
-        NodeList nodes = gNode.getChildNodes();
+		l.xStartPos = Float.parseFloat(element.getAttribute("xStartPos"));
+		l.yStartPos = Float.parseFloat(element.getAttribute("yStartPos"));
+		l.zStartPos = Float.parseFloat(element.getAttribute("zStartPos"));
+        NodeList nodes = element.getChildNodes();
         for(int n=0; n < nodes.getLength(); n++) {
         	Node nNode = nodes.item(n);
         	if (nNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -92,12 +108,17 @@ public class Level {
         }
 		return l;		
 	}
-	
+	/**
+	 * Constructor
+	 */
 	private Level() {
 		monsters = new Monster[MAX_MONSTERS];
 		monstersLiving = new boolean[MAX_MONSTERS];
 		bullets = new ArrayList<Bullet>(MAX_BULLETS);
 	}
+	/**
+	 * Start the level.
+	 */
 	protected void start() {
 		xPos = xStartPos;
 		yPos = yStartPos;
@@ -109,7 +130,9 @@ public class Level {
 			}
 		}		
 	}
-	
+	/**
+	 * Render the level.
+	 */
 	protected void render() {
 	    //glEnable(GL_LIGHT0);
 	    lightPosition = BufferUtils.createFloatBuffer(4);
@@ -142,11 +165,17 @@ public class Level {
 			}
 		}
 	}
+	/**
+	 * Fire a bullet.
+	 */
 	protected void fireBullet() {
 		if(bulletTime - System.nanoTime() >= BULLET_INTERVAL && bullets.size() < MAX_BULLETS) {
 			bullets.add(new Bullet(xPos,yPos,zPos,heading));
 		}
 	}
+	/**
+	 * Walk forwards.
+	 */
 	protected void walkForwards() {
 	    zPos -= Math.cos(Math.toRadians(heading))*MOVE_FORWARD_SPEED;
 	    xPos += Math.sin(Math.toRadians(heading))*MOVE_FORWARD_SPEED;
@@ -160,6 +189,9 @@ public class Level {
 	    }
 	    walkbias = (float)Math.sin(Math.toRadians(walkbiasangle))/20.0f;     // Causes The Player To Bounce
 	}
+	/**
+	 * Walk backwards.
+	 */
 	protected void walkBackwards() {
 		zPos += Math.cos(Math.toRadians(heading))*MOVE_BACKWARD_SPEED;
 		xPos -= Math.sin(Math.toRadians(heading))*MOVE_BACKWARD_SPEED;
@@ -173,31 +205,59 @@ public class Level {
 	    }
 	    walkbias = (float)Math.sin(Math.toRadians(walkbiasangle))/20.0f;     // Causes The Player To Bounce		
 	}
+	/**
+	 * Strafe left.
+	 */
 	protected void strafeLeft() {
 		xPos -= Math.cos(Math.toRadians(heading))*STRAFE_SPEED; //LEFT
 		zPos -= Math.sin(Math.toRadians(heading))*STRAFE_SPEED;
 	}
+	/**
+	 * Strafe right.
+	 */
 	protected void strafeRight() {
 		xPos += Math.cos(Math.toRadians(heading))*STRAFE_SPEED; //RIGHT
 		zPos += Math.sin(Math.toRadians(heading))*STRAFE_SPEED;
 	}
+	/**
+	 * Turn left.
+	 */
 	protected void turnLeft() {
 		heading -= ROTATE_SPEED;
 	}
+	/**
+	 * Turn right.
+	 */
 	protected void turnRight() {
 		heading += ROTATE_SPEED;
 	}
+	/**
+	 * Update the level.
+	 */
 	protected void update() {
 		
 	}
+	/**
+	 * Check whether finished
+	 * @return True if finished.
+	 */
 	protected boolean isFinished() {
 		for(int i = 0; i < monsters.length; i++) {
 			if(monstersLiving[i]) {
 				return false;
 			}
 		}
+		//TODO: Finish
 		return false;
 	}
+	/**
+	 * Render the floor.
+	 * @param x X
+	 * @param y Y
+	 * @param z Z
+	 * @param width Width
+	 * @param length Length
+	 */
 	private void renderFloor(float x, float y, float z, float width, float length) {
 		glPushMatrix();
 		glBegin(GL_QUADS);
@@ -209,6 +269,15 @@ public class Level {
 		glEnd();                        // Done Drawing The Floor
 	    glPopMatrix();
 	}
+	/**
+	 * Render the walls
+	 * @param x X
+	 * @param y Y
+	 * @param z Z
+	 * @param height Height
+	 * @param width Width
+	 * @param length Length
+	 */
 	private void renderWalls(float x, float y, float z, float height, float width, float length) {
 		glPushMatrix();
 		glBegin(GL_QUADS);
@@ -220,6 +289,10 @@ public class Level {
 		glEnd();                        // Done Drawing The Floor
 	    glPopMatrix();
 	}
+	
+	/**
+	 * Restart the level.
+	 */
 	public void restart() {
 		//Reset Monsters
 		for(int i = 0; i < monsters.length; i++) {
